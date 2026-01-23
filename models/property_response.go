@@ -60,32 +60,32 @@ type Partner struct {
 }
 
 type RawPropertyDetail struct {
-	AmenityCategories    []string      `json:"amenity_categories"`
-	Archived             []string      `json:"archived"`
-	BathroomCount        int           `json:"bathroom_count"`
-	BedroomCount         int           `json:"bedroom_count"`
+	ID                   string        `json:"id"`
+	Feed                 int           `json:"feed"`
+	Published            bool          `json:"published"`
 	Categories           string        `json:"categories"`
 	City                 string        `json:"city"`
 	Country              string        `json:"country"`
 	CountryCode          string        `json:"country_code"`
 	Display              string        `json:"display"`
-	Feed                 int           `json:"feed"`
-	FeedProviderID       string        `json:"feed_provider_id"`
-	FeedProviderURL      string        `json:"feed_provider_url"`
-	FeatureImage         string        `json:"feature_image"`
-	ID                   string        `json:"id"`
 	LocationID           string        `json:"location_id"`
 	LonLat               LonLat        `json:"lonlat"`
-	MinStay              int           `json:"min_stay"`
+	AmenityCategories    []string      `json:"amenity_categories"`
+	BedroomCount         int           `json:"bedroom_count"`
+	BathroomCount        int           `json:"bathroom_count"`
 	Occupancy            int           `json:"occupancy"`
-	OwnerID              *string       `json:"owner_id"`
+	FeatureImage         string        `json:"feature_image"`
 	PropertyFlags        PropertyFlags `json:"property_flags"`
+	MinStay              int           `json:"min_stay"`
 	PropertyName         string        `json:"property_name"`
 	PropertySlug         string        `json:"property_slug"`
 	PropertyType         string        `json:"property_type"`
-	PropertyTypeCategory string        `json:"property_type_category"`
-	Published            bool          `json:"published"`
 	RoomSizeSqft         float64       `json:"room_size_sqft"`
+	OwnerID              *string       `json:"owner_id"`
+	Archived             []string      `json:"archived"`
+	FeedProviderID       string        `json:"feed_provider_id"`
+	FeedProviderURL      string        `json:"feed_provider_url"`
+	PropertyTypeCategory string        `json:"property_type_category"`
 }
 
 type LonLat struct {

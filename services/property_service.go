@@ -15,23 +15,6 @@ type PropertyService struct {
 	client  *HTTPClient
 }
 
-type amenityInfo struct {
-	id   string
-	name string
-}
-
-var amenityMappings = map[string]amenityInfo{
-	"Air Conditioner":     {id: "1", name: "Aire acondicionado"},
-	"Balcony/Terrace":     {id: "2", name: "Balc\u00f3n/Terraza"},
-	"Hot Tub":             {id: "6", name: "Ba\u00f1era de hidromasaje"},
-	"Internet":            {id: "7", name: "Internet"},
-	"Parking":             {id: "10", name: "Estacionamiento"},
-	"Pet Friendly":        {id: "11", name: "Mascota amigable"},
-	"View":                {id: "15", name: "Vista"},
-	"Wellness Facilities": {id: "31", name: "Instalaciones de bienestar"},
-	"Fireplace/Heating":   {id: "33", name: "Chimenea/Calefacci\u00f3n"},
-}
-
 type propertyTypeInfo struct {
 	name string
 	id   string
@@ -68,12 +51,7 @@ func TransformPropertyDetail(detail *models.RawPropertyDetail) models.PropertyIt
 		slug = categories[len(categories)-1].Slug
 	}
 
-	amenities := make(map[string]string)
-	for _, name := range detail.AmenityCategories {
-		if mapping, ok := amenityMappings[name]; ok {
-			amenities[mapping.id] = mapping.name
-		}
-	}
+	amenities := mapAmenities(detail.AmenityCategories)
 
 	propertyType := detail.PropertyTypeCategory
 	propertyTypeCategoryID := ""
@@ -147,4 +125,16 @@ func formatCoordinates(coords []float64) (string, string) {
 	lng := strconv.FormatFloat(coords[0], 'f', -1, 64)
 	lat := strconv.FormatFloat(coords[1], 'f', -1, 64)
 	return lat, lng
+}
+
+func mapAmenities(amenityCategories []string) map[string]string {
+	amenities := make(map[string]string)
+	for index, name := range amenityCategories {
+		if strings.TrimSpace(name) == "" {
+			continue
+		}
+		key := strconv.Itoa(index + 1)
+		amenities[key] = name
+	}
+	return amenities
 }
