@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"sync"
 	"time"
 
 	"property_listing_api/models"
@@ -87,22 +88,27 @@ func (c *PropertyController) Get() {
 		err    error
 	}
 
-
-	// create channel 
 	results := make(chan propertyDetailResult, len(ids))
+	var wg sync.WaitGroup
 
-	// call property service for details using channel
+	// call property service for details concurrently
+	wg.Add(len(ids))
 	for index, id := range ids {
 		go func(idx int, propertyID string) {
+			defer wg.Done()
 			detail, err := propertyService.GetPropertyDetails(propertyID)
 			results <- propertyDetailResult{index: idx, detail: detail, err: err}
 		}(index, id)
 	}
 
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
 	items := make([]models.PropertyItem, len(ids))
 	var fetchErr error
-	for range ids {
-		result := <-results
+	for result := range results {
 		if result.err != nil {
 			if fetchErr == nil {
 				fetchErr = result.err
