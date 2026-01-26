@@ -37,30 +37,32 @@ The service listens on `http://localhost:8080` by default.
 ## Project structure
 
 ```
-conf/
-  app.conf                         # Beego configuration defaults
-controllers/
-  default.go                       # Root route handler
-  property_controller.go           # /v1/properties handler
-models/
-  property_response.go             # API response models
-routers/
-  router.go                        # Route and namespace setup
-services/
-  http_client.go                   # HTTP client wrapper
-  location_service.go              # Location lookup/normalization
-  property_service.go              # Property aggregation and mapping
-static/
-  js/reload.min.js                 # Beego dev reload script
-tests/
-  default_test.go                  # Basic Beego test
-utils/
-  validator.go                     # Request validation helpers
-views/
-  index.tpl                        # Default template
-main.go                            # Application bootstrap
-go.mod                             # Module definition
-go.sum                             # Dependency checksums
+.
+├── conf/
+│   └── app.conf                   # Beego configuration defaults
+├── controllers/
+│   ├── default.go                 # Root route handler
+│   └── property_controller.go     # /v1/properties handler
+├── models/
+│   └── property_response.go       # API response models
+├── routers/
+│   └── router.go                  # Route and namespace setup
+├── services/
+│   ├── http_client.go             # HTTP client wrapper
+│   ├── location_service.go        # Location lookup/normalization
+│   └── property_service.go        # Property aggregation and mapping
+├── static/
+│   └── js/
+│       └── reload.min.js          # Beego dev reload script
+├── tests/
+│   └── default_test.go            # Basic Beego test
+├── utils/
+│   └── validator.go               # Request validation helpers
+├── views/
+│   └── index.tpl                  # Default template
+├── main.go                        # Application bootstrap
+├── go.mod                         # Module definition
+└── go.sum                         # Dependency checksums
 ```
 
 ## Request flow
@@ -97,6 +99,8 @@ Response:
 - `400`: invalid query params
 - `401`: invalid API key
 - `500`: server configuration error
+- `502`: external API error
+
 
 Example response (single item):
 
@@ -200,7 +204,3 @@ Example response (single item):
 | `http_client_timeout_seconds` | Upstream HTTP timeout (seconds)    | `10` |
 
 `x-api-key` is required for protected endpoints.
-
-## Development notes
-
-- `conf/app.conf` maps to Beego settings; env values override these at runtime.
