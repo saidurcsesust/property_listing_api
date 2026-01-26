@@ -32,8 +32,9 @@ func (s *PropertyService) GetPropertyDetails(id string) (*models.RawPropertyDeta
 	if strings.TrimSpace(s.baseURL) == "" {
 		return nil, errors.New("property service base URL is empty")
 	}
+	fmt.Println(s.baseURL)
 	url := fmt.Sprintf("%s/%s", strings.TrimRight(s.baseURL, "/"), id)
-
+	fmt.Println(url)
 	var detail models.RawPropertyDetail
 	_, err := s.client.GetJSON(url, &detail)
 	if err != nil {

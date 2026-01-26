@@ -189,7 +189,7 @@
     </section>
 
     <div class="code">
-      GET /api/properties?location=usa:florida:destin&amp;items=true
+      GET /api/properties/usa:florida:destin&amp;items=true
     </div>
 
     <div class="meta">

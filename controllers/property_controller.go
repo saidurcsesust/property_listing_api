@@ -31,19 +31,6 @@ type PropertyController struct {
 
 func (c *PropertyController) Get() {
 
-	// read api key from app.conf
-	apiKey, err := web.AppConfig.String("api_key")
-	if err != nil || apiKey == "" {
-		c.writeError(http.StatusInternalServerError, "unexpected server error")
-		return
-	}
-
-	// validate x-api-key header from client
-	if err := utils.ValidateAPIKey(c.Ctx.Input.Header("x-api-key"), apiKey); err != nil {
-		c.writeError(http.StatusUnauthorized, err.Error())
-		return
-	}
-
 	// read and validate path/query parameters
 	location := c.Ctx.Input.Param(":location")
 	itemsParam := c.GetString("items")
