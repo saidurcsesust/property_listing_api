@@ -8,25 +8,41 @@ import (
 	"property_listing_api/services"
 	"property_listing_api/utils"
 
-	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/server/web"
 )
 
 type PropertyController struct {
-	beego.Controller
+	web.Controller
 }
 
+// @Title GetProperties
+// @Description Get property listings by location
+// @Param x-api-key header string true "API key"
+// @Param location query string true "Location identifier"
+// @Param items query string true "Number of items to return"
+// @Success 200 {object} models.PropertyResponse
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 502 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @router / [get]
+
 func (c *PropertyController) Get() {
-	apiKey, err := beego.AppConfig.String("api_key")
+
+	// read api key from app.conf
+	apiKey, err := web.AppConfig.String("api_key")
 	if err != nil || apiKey == "" {
 		c.writeError(http.StatusInternalServerError, "unexpected server error")
 		return
 	}
 
+	// validate x-api-key header from client
 	if err := utils.ValidateAPIKey(c.Ctx.Input.Header("x-api-key"), apiKey); err != nil {
-		c.writeError(http.StatusBadRequest, err.Error())
+		c.writeError(http.StatusUnauthorized, err.Error())
 		return
 	}
 
+	// read and validate query parameters
 	location := c.GetString("location")
 	itemsParam := c.GetString("items")
 	if err := utils.ValidateQueryParams(location, itemsParam); err != nil {
@@ -34,12 +50,12 @@ func (c *PropertyController) Get() {
 		return
 	}
 
-	locationBaseURL, err := beego.AppConfig.String("location_service_url")
+	locationBaseURL, err := web.AppConfig.String("location_service_url")
 	if err != nil {
 		c.writeError(http.StatusInternalServerError, "unexpected server error")
 		return
 	}
-	propertyBaseURL, err := beego.AppConfig.String("property_service_url")
+	propertyBaseURL, err := web.AppConfig.String("property_service_url")
 	if err != nil {
 		c.writeError(http.StatusInternalServerError, "unexpected server error")
 		return
@@ -49,7 +65,7 @@ func (c *PropertyController) Get() {
 		return
 	}
 
-	timeoutSeconds, err := beego.AppConfig.Int("http_client_timeout_seconds")
+	timeoutSeconds, err := web.AppConfig.Int("http_client_timeout_seconds")
 	if err != nil || timeoutSeconds <= 0 {
 		timeoutSeconds = 10
 	}
@@ -58,20 +74,47 @@ func (c *PropertyController) Get() {
 	locationService := services.NewLocationService(locationBaseURL, client)
 	propertyService := services.NewPropertyService(propertyBaseURL, client)
 
+	// get ids
 	ids, err := locationService.GetPropertyIDs(location)
 	if err != nil {
 		c.writeError(http.StatusBadGateway, "failed to fetch property IDs from location service")
 		return
 	}
 
-	items := make([]models.PropertyItem, 0, len(ids))
-	for _, id := range ids {
-		detail, err := propertyService.GetPropertyDetails(id)
-		if err != nil {
-			c.writeError(http.StatusBadGateway, "failed to fetch property details from property service")
-			return
+	type propertyDetailResult struct {
+		index  int
+		detail *models.RawPropertyDetail
+		err    error
+	}
+
+
+	// create channel 
+	results := make(chan propertyDetailResult, len(ids))
+
+	// call property service for details using channel
+	for index, id := range ids {
+		go func(idx int, propertyID string) {
+			detail, err := propertyService.GetPropertyDetails(propertyID)
+			results <- propertyDetailResult{index: idx, detail: detail, err: err}
+		}(index, id)
+	}
+
+	items := make([]models.PropertyItem, len(ids))
+	var fetchErr error
+	for range ids {
+		result := <-results
+		if result.err != nil {
+			if fetchErr == nil {
+				fetchErr = result.err
+			}
+			continue
 		}
-		items = append(items, services.TransformPropertyDetail(detail))
+		items[result.index] = services.TransformPropertyDetail(result.detail)
+	}
+
+	if fetchErr != nil {
+		c.writeError(http.StatusBadGateway, "failed to fetch property details from property service")
+		return
 	}
 
 	c.Data["json"] = models.PropertyResponse{Items: items}

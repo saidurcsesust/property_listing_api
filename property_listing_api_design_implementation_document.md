@@ -279,7 +279,7 @@ property-listing-api/
 
 ---
 
-## 6. Configuration Management
+## 6. Configurausation Management
 
 ### 6.1 `conf/app.conf`
 
