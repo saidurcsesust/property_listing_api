@@ -6,20 +6,15 @@ normalized property details.
 ## Requirements
 
 - Go 1.25+ (per `go.mod`)
-- Access to the upstream location and property services
 
 ## Configuration
 
 Create a `.env` in the project root:
 
 ```
-APP_NAME=property_listing_api
-HTTP_PORT=8080
-RUN_MODE=dev
-LOCATION_SERVICE_URL=http://192.168.0.35:8099/api
-PROPERTY_SERVICE_URL=http://192.168.0.35:8099/api
+LOCATION_SERVICE_URL= Location_Url
+PROPERTY_SERVICE_URL= Property_Url
 API_KEY=your_api_key_here
-HTTP_CLIENT_TIMEOUT_SECONDS=10
 ```
 
 These values are loaded at startup and applied to Beego config keys.
@@ -27,7 +22,7 @@ These values are loaded at startup and applied to Beego config keys.
 ## Run
 
 ```
-go run .
+bee run
 ```
 
 The service listens on `http://localhost:8080` by default.
@@ -57,4 +52,3 @@ Response:
 ## Development notes
 
 - `conf/app.conf` maps to Beego settings; env values override these at runtime.
-- The homepage is at `/` and includes a small “Try it now” fetch UI.
