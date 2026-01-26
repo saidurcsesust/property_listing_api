@@ -14,18 +14,6 @@ git clone https://github.com/saidurcsesust/property_listing_api.git
 cd property_listing_api
 ```
 
-## Configuration
-
-Create a `.env` in the project root:
-
-```
-Property_Url=https://example.com/api
-PROPERTY_SERVICE_URL=https://example.com/api
-API_KEY=your_api_key_here
-```
-
-These values are loaded at startup and applied to Beego config keys.
-
 ## Run
 
 ```
@@ -45,7 +33,7 @@ GET /v1/properties?location=usa:florida:destin&items=true
 Headers:
 
 ```
-x-api-key: <API_KEY>
+x-api-key: 63f4945d921d599f27ae4fdf5bada3f1
 ```
 
 Response:
