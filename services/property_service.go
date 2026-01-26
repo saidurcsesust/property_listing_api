@@ -20,10 +20,6 @@ type propertyTypeInfo struct {
 	id   string
 }
 
-var propertyTypeMappings = map[string]propertyTypeInfo{
-	"House": {name: "Casa", id: "6"},
-}
-
 func NewPropertyService(baseURL string, client *HTTPClient) *PropertyService {
 	return &PropertyService{baseURL: baseURL, client: client}
 }
@@ -32,9 +28,9 @@ func (s *PropertyService) GetPropertyDetails(id string) (*models.RawPropertyDeta
 	if strings.TrimSpace(s.baseURL) == "" {
 		return nil, errors.New("property service base URL is empty")
 	}
-	fmt.Println(s.baseURL)
+	// fmt.Println(s.baseURL)
 	url := fmt.Sprintf("%s/%s", strings.TrimRight(s.baseURL, "/"), id)
-	fmt.Println(url)
+	// fmt.Println(url)
 	var detail models.RawPropertyDetail
 	_, err := s.client.GetJSON(url, &detail)
 	if err != nil {
@@ -45,7 +41,10 @@ func (s *PropertyService) GetPropertyDetails(id string) (*models.RawPropertyDeta
 }
 
 func TransformPropertyDetail(detail *models.RawPropertyDetail) models.PropertyItem {
+
 	categories := parseCategories(detail.Categories)
+	// fmt.Println(detail.Categories)
+
 	lat, lng := formatCoordinates(detail.LonLat.Coordinates)
 	slug := ""
 	if len(categories) > 0 {
@@ -56,10 +55,6 @@ func TransformPropertyDetail(detail *models.RawPropertyDetail) models.PropertyIt
 
 	propertyType := detail.PropertyTypeCategory
 	propertyTypeCategoryID := ""
-	if mapping, ok := propertyTypeMappings[detail.PropertyTypeCategory]; ok {
-		propertyType = mapping.name
-		propertyTypeCategoryID = mapping.id
-	}
 
 	ownerID := ""
 	if detail.OwnerID != nil {

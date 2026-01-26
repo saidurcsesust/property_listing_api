@@ -1,5 +1,6 @@
 package models
 
+// PropertyResponse is used for API responses.
 type PropertyResponse struct {
 	Items []PropertyItem `json:"Items"`
 }
@@ -59,6 +60,7 @@ type Partner struct {
 	URL          string   `json:"URL"`
 }
 
+// RawPropertyDetail is used for upstream service responses.
 type RawPropertyDetail struct {
 	ID                   string        `json:"id"`
 	Feed                 int           `json:"feed"`

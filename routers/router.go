@@ -10,6 +10,7 @@ import (
 func init() {
 	beego.Router("/", &controllers.MainController{})
 
+	// Validate API key for all /v1 routes.
 	beego.InsertFilter("/v1/*", beego.BeforeRouter, func(ctx *context.Context) {
 		apiKey, err := beego.AppConfig.String("api_key")
 		if err != nil || apiKey == "" {
