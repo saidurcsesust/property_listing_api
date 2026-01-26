@@ -76,7 +76,7 @@ router -> controller -> service(s) -> model -> JSON response
 ### Get properties
 
 ```
-GET /v1/properties?location=usa:florida:destin&items=true
+GET /v1/properties/usa:florida:destin?items=true
 ```
 
 Headers:
@@ -90,7 +90,7 @@ Example curl:
 ```bash
 curl -s \
   -H "x-api-key: 63f4945d921d599f27ae4fdf5bada3f1" \
-  "http://localhost:8080/v1/properties?location=usa:florida:destin&items=true"
+  "http://localhost:8080/v1/properties/usa:florida:destin?items=true"
 ```
 
 Response:

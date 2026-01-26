@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -19,14 +20,14 @@ type PropertyController struct {
 // @Title GetProperties
 // @Description Get property listings by location
 // @Param x-api-key header string true "API key"
-// @Param location query string true "Location identifier"
+// @Param location path string true "Location identifier"
 // @Param items query string true "Number of items to return"
 // @Success 200 {object} models.PropertyResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 502 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @router / [get]
+// @router /:location [get]
 
 func (c *PropertyController) Get() {
 
@@ -43,9 +44,14 @@ func (c *PropertyController) Get() {
 		return
 	}
 
-	// read and validate query parameters
-	location := c.GetString("location")
+	// read and validate path/query parameters
+	location := c.Ctx.Input.Param(":location")
 	itemsParam := c.GetString("items")
+	if itemsParam == "" && strings.Contains(location, "&items=") {
+		parts := strings.SplitN(location, "&items=", 2)
+		location = parts[0]
+		itemsParam = parts[1]
+	}
 	if err := utils.ValidateQueryParams(location, itemsParam); err != nil {
 		c.writeError(http.StatusBadRequest, err.Error())
 		return
