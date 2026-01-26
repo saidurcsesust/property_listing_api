@@ -18,21 +18,46 @@ normalized property details.
 ## Requirements
 
 - Go 1.25+ (per `go.mod`)
+- Beego CLI (bee)
 
-## Clone
+## Setup and run
+
+1) Clone the repo
 
 ```
 git clone https://github.com/saidurcsesust/property_listing_api.git
 cd property_listing_api
 ```
 
-## Run
+2) Install the Beego CLI (one-time)
+
+```
+go install github.com/beego/bee/v2@latest
+```
+
+3) Download dependencies
+
+```
+go mod tidy
+```
+
+4) Configure upstream services and API key (optional)
+
+- Edit `conf/app.conf` or set environment variables to match your services.
+
+5) Run the server
 
 ```
 bee run
 ```
 
 The service listens on `http://localhost:8080` by default.
+
+## Tests
+
+```
+go test ./...
+```
 
 ## Project structure
 
