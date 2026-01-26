@@ -1,6 +1,9 @@
 package routers
 
 import (
+	"encoding/json"
+	"net/http"
+
 	beego "github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
 	"property_listing_api/controllers"
@@ -9,6 +12,11 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
+	beego.ErrorHandler("404", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Content-Type", "application/json; charset=utf-8")
+		rw.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(rw).Encode(map[string]string{"error": "invalid route"})
+	})
 
 	// Validate API key for all /v1 routes.
 	beego.InsertFilter("/v1/*", beego.BeforeRouter, func(ctx *context.Context) {
