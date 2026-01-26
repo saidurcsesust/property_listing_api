@@ -7,5 +7,9 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/v1/properties", &controllers.PropertyController{})
+
+	apiV1 := beego.NewNamespace("/v1",
+		beego.NSRouter("/properties", &controllers.PropertyController{}),
+	)
+	beego.AddNamespace(apiV1)
 }
